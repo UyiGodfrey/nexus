@@ -48,5 +48,5 @@ jobs:
           git status
           git log -1 --oneline
 
-      - name: CI completed  
-        run: echo "Repository validation passed"
+      - name: CI completed
+        run: echo "Repository validation passed."
