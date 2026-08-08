@@ -43,6 +43,14 @@ jobs:
           test -f docs/adr/ADR-003-infrastructure-as-code.md
           test -f docs/adr/ADR-004-application-architecture.md
 
+      - name: Install application dependencies
+        working-directory: app
+        run: npm ci
+
+      - name: Run application tests
+        working-directory: app
+        run: npm test
+
       - name: Validate Git repository
         run: |
           git status
