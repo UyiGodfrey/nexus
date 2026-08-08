@@ -1,0 +1,62 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - master
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  build-and-push:
+    name: Build and Push Production Image
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Display release information
+        run: |
+          echo "Release pipeline started"
+          echo "Commit: ${{ github.sha }}"
+          echo "Branch: ${{ github.ref_name }}"
+
+      - name: Configure AWS credentials using OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::417067938602:role/nexus-github-actions-role
+          aws-region: eu-west-1
+
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build production Docker image
+        run: |
+          docker build \
+            -f docker/Dockerfile \
+            -t nexus-api:${{ github.sha }} .
+
+      - name: Tag image for ECR
+        run: |
+          docker tag \
+            nexus-api:${{ github.sha }} \
+            417067938602.dkr.ecr.eu-west-1.amazonaws.com/nexus-api:${{ github.sha }}
+
+          docker tag \
+            nexus-api:${{ github.sha }} \
+            417067938602.dkr.ecr.eu-west-1.amazonaws.com/nexus-api:latest
+
+      - name: Push image to ECR
+        run: |
+          docker push \
+            417067938602.dkr.ecr.eu-west-1.amazonaws.com/nexus-api:${{ github.sha }}
+
+          docker push \
+            417067938602.dkr.ecr.eu-west-1.amazonaws.com/nexus-api:latest
+
+      - name: Release completed
+        run: |
+          echo "Production image published successfully"
