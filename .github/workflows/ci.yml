@@ -8,6 +8,7 @@ on:
 
 permissions:
   contents: read
+  id-token: write
 
 jobs:
   repository-validation:
@@ -53,7 +54,10 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -f docker/Dockerfile -t nexus-api:test .
+          docker build \
+            -f docker/Dockerfile \
+            -t nexus-api:${{ github.sha }} .
+
 
       - name: Validate Git repository
         run: |
