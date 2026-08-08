@@ -1,0 +1,9 @@
+# NEXUS CODEOWNERS
+#
+# Replace these placeholders with real GitHub teams/users
+# when repository ownership is established.
+
+/.github/            @nexus-maintainers
+/docs/               @nexus-maintainers
+/infrastructure/     @nexus-platform
+/security/            @nexus-security
