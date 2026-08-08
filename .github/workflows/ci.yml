@@ -8,6 +8,7 @@ on:
 
 permissions:
   contents: read
+  id-token: write
 
 jobs:
   repository-validation:
@@ -54,6 +55,15 @@ jobs:
       - name: Build Docker image
         run: |
           docker build -f docker/Dockerfile -t nexus-api:test .
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::123456789012:role/YourRoleName
+          aws-region: eu-west-1
+
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v1
 
       - name: Validate Git repository
         run: |
