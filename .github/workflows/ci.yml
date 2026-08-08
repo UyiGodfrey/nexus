@@ -43,5 +43,10 @@ jobs:
           test -f docs/adr/ADR-003-infrastructure-as-code.md
           test -f docs/adr/ADR-004-application-architecture.md
 
+      - name: Validate Git repository
+        run: |
+          git status
+          git log -1 --oneline
+
       - name: CI completed
         run: echo "Repository validation passed."
