@@ -51,6 +51,10 @@ jobs:
         working-directory: app
         run: npm test
 
+      - name: Build Docker image
+        run: |
+          docker build -f docker/Dockerfile -t nexus-api:test .
+
       - name: Validate Git repository
         run: |
           git status
