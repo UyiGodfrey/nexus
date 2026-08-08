@@ -54,16 +54,29 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -f docker/Dockerfile -t nexus-api:test .
+          docker build \
+            -f docker/Dockerfile \
+            -t nexus-api:${{ github.sha }} .
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::123456789012:role/YourRoleName
+          role-to-assume: arn:aws:iam::417067938602:role/nexus-github-actions-role
           aws-region: eu-west-1
 
       - name: Login to Amazon ECR
-        uses: aws-actions/amazon-ecr-login@v1
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Tag Docker image for ECR
+        run: |
+          docker tag \
+            nexus-api:${{ github.sha }} \
+            417067938602.dkr.ecr.eu-west-1.amazonaws.com/nexus-api:${{ github.sha }}
+
+      - name: Push Docker image to ECR
+        run: |
+          docker push \
+            417067938602.dkr.ecr.eu-west-1.amazonaws.com/nexus-api:${{ github.sha }}
 
       - name: Validate Git repository
         run: |
